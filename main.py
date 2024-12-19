@@ -30,7 +30,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Center the title
-st.markdown("<h1 style='text-align: center;'>Audio File Analyzer</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>LANDR QC</h1>", unsafe_allow_html=True)
 
 
 def format_duration(seconds):
