@@ -145,25 +145,41 @@ if uploaded_files:
         columns = ['File Name', 'Sample Rate', 'Bit Depth', 'Channels', 'Duration', 'True Peak L', 'True Peak R']
         df = df[columns]
 
+
         # Style the DataFrame
         def highlight_row(row):
-            has_peak_over_zero = False
+            should_highlight = False
             try:
-                # Check True Peak L
+                # Check True Peak L and R
                 if 'dB' in str(row['True Peak L']):
                     peak_val = float(row['True Peak L'].replace(' dB', ''))
                     if peak_val >= 0:
-                        has_peak_over_zero = True
-                
-                # Check True Peak R if it exists
+                        should_highlight = True
+
                 if row['True Peak R'] != 'N/A' and 'dB' in str(row['True Peak R']):
                     peak_val = float(row['True Peak R'].replace(' dB', ''))
                     if peak_val >= 0:
-                        has_peak_over_zero = True
+                        should_highlight = True
+
+                # Check Channels
+                if row['Channels'] != 2:
+                    should_highlight = True
+
+                # Check Sample Rate
+                if row['Sample Rate'] != '44100 Hz':
+                    should_highlight = True
+
+                # Check Bit Depth
+                if row['Bit Depth'] != '24-bit':
+                    should_highlight = True
+
+                # Note: File type check is handled by the file uploader's type=['wav'] parameter
+
             except:
                 pass
-            
-            return ['background-color: #fee2e2' if has_peak_over_zero else '' for _ in row]
+
+            return ['background-color: #fee2e2' if should_highlight else '' for _ in row]
+
 
         # Center the table
         col1, col2, col3 = st.columns([0.1, 0.8, 0.1])
