@@ -146,22 +146,31 @@ if uploaded_files:
         df = df[columns]
 
         # Style the DataFrame
-        def highlight_peaks(val):
+        def highlight_row(row):
+            has_peak_over_zero = False
             try:
-                if 'dB' in str(val):
-                    peak_val = float(val.replace(' dB', ''))
+                # Check True Peak L
+                if 'dB' in str(row['True Peak L']):
+                    peak_val = float(row['True Peak L'].replace(' dB', ''))
                     if peak_val >= 0:
-                        return 'background-color: #fee2e2'  # Light red background
+                        has_peak_over_zero = True
+                
+                # Check True Peak R if it exists
+                if row['True Peak R'] != 'N/A' and 'dB' in str(row['True Peak R']):
+                    peak_val = float(row['True Peak R'].replace(' dB', ''))
+                    if peak_val >= 0:
+                        has_peak_over_zero = True
             except:
                 pass
-            return ''
+            
+            return ['background-color: #fee2e2' if has_peak_over_zero else '' for _ in row]
 
         # Center the table
         col1, col2, col3 = st.columns([0.1, 0.8, 0.1])
         with col2:
             st.dataframe(
                 df.style
-                .apply(lambda x: [highlight_peaks(val) for val in x], axis=1)
+                .apply(highlight_row, axis=1)
                 .format(precision=2)
                 .set_properties(**{
                     'text-align': 'center',
